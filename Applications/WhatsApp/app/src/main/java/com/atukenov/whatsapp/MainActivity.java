@@ -1,5 +1,6 @@
 package com.atukenov.whatsapp;
 
+import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,7 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -110,9 +116,60 @@ public class MainActivity extends AppCompatActivity {
             return fragment;
         }
 
+        public class myList
+        {
+            String name = null;
+            String surname = null;
+
+            myList(String name, String surname)
+            {
+                this.name = name;
+                this.surname = surname;
+            }
+        }
+
+        public class myListAdapter extends ArrayAdapter<myList>
+        {
+            myListAdapter (Context view, ArrayList<myList> users)
+            {
+                super (view, 0, users);
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent)
+            {
+                myList user = getItem(position);
+                if (convertView == null)
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.adapter, parent, false);
+
+                TextView name = (TextView) convertView.findViewById(R.id.name);
+                TextView surname = (TextView) convertView.findViewById(R.id.surname);
+
+                name.setText(user.name);
+                surname.setText(user.surname);
+
+                return convertView;
+            }
+
+        }
+
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragments, container, false);
+
+            ArrayList<myList> array = new ArrayList<myList>();
+
+            array.add(new myList("Almaz", "Tukenov"));
+            array.add(new myList("Daniyar", "Kayirbolatov"));
+
+            myListAdapter list = new myListAdapter(getContext(), array);
+
+
+            ListView listView = (ListView) rootView.findViewById(R.id.listView);
+            listView.setAdapter(list);
+
+            list.notifyDataSetChanged();
             /**
              * TextView textView = (TextView) rootView.findViewById(R.id.section_label);
              * textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
